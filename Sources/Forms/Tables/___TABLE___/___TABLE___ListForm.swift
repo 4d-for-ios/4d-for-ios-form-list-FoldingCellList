@@ -76,7 +76,10 @@ class ___TABLE___ListForm: ListFormTable {
             }
     }
 
-    let vc = UIStoryboard(name: "___TABLE___ListForm", bundle: nil).instantiateViewController(withIdentifier: "Second") as! TableSearchController
+    lazy tableSearchController: TableSearchController {
+        let storyboard = UIStoryboard(name: "___TABLE___ListForm", bundle: nil)
+        return storyboard.instantiateViewController(withIdentifier: "Second") as! TableSearchController //swiftlint:disable:this force_cast
+    }()
 
     open override func onSearchBegin() {
         let checkEmptyTable = UserDefaults.standard.searchArray
@@ -112,16 +115,17 @@ class ___TABLE___ListForm: ListFormTable {
     var totalHeight = CGFloat()
 
     func addChildView() {
-        addChild(vc)
-        vc.delegate = self
-        self.view.addSubview(vc.view)
+        addChild(tableSearchController)
+        tableSearchController.delegate = self
+        self.view.addSubview(tableSearchController.view)
         self.tableView.isScrollEnabled = false
-        vc.didMove(toParent: self)
+        tableSearchController.didMove(toParent: self)
         let nav = UINavigationController()
         let navHeight = nav.navigationBar.frame.size.height
-        self.vc.view.frame.origin.y = self.tableView!.contentOffset.y + navHeight
+        self.tableSearchController.view.frame.origin.y = self.tableView!.contentOffset.y + navHeight
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 1, options: [.curveEaseOut], animations: {
-            self.vc.view.frame.origin.y = self.tableView!.contentOffset.y + navHeight
+            guard let tableView = self.tableView else { return }
+            self.vc.view.frame.origin.y = tableView.contentOffset.y + navHeight
         }, completion: nil)
     }
 
@@ -131,20 +135,19 @@ class ___TABLE___ListForm: ListFormTable {
 
         var frame = self.vc.view.frame
         frame.origin.y = UIScreen.main.bounds.maxY
-        self.vc.view.frame = frame
-        vc.willMove(toParent: nil)
+        self.tableSearchController.view.frame = frame
+        tableSearchController.willMove(toParent: nil)
         self.tableView.isScrollEnabled = true
 
         UIView.animate(withDuration: 0.8, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 1, options: [.curveEaseOut], animations: {
-            self.vc.view.frame.origin.y = screenHeight
-        }) { _ in
-            self.vc.view.removeFromSuperview()
-            self.vc.removeFromParent()
-        }
+            self.tableSearchController.view.frame.origin.y = screenHeight
+        }, completion: { _ in
+            self.tableSearchController.view.removeFromSuperview()
+            self.tableSearchController.removeFromParent()
+        })
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
         let contentOffset =  tableView.contentOffset.y
         let nav = UINavigationController()
         let navHeight = nav.navigationBar.frame.size.height
@@ -201,20 +204,17 @@ extension ___TABLE___ListForm {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        let cell = tableView.cellForRow(at: indexPath) as! FoldingCell
-        if cell.isAnimating() {
+        guard let cell = tableView.cellForRow(at: indexPath) as? FoldingCell, cell.isAnimating() else {
             return
         }
 
         var duration = 0.0
         let cellIsCollapsed = !unfolded.contains(indexPath)
         if cellIsCollapsed {
-
             unfolded.append(indexPath)
             cell.unfold(true, animated: true, completion: nil)
             duration = 0.5
         } else {
-
             if let index = unfolded.index(of: indexPath) {
                 unfolded.remove(at: index)
             }
@@ -247,7 +247,7 @@ class TableSearchController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedText = tableContent[indexPath.row]
-        UIApplication.shared.sendAction("resignFirstResponder", to:nil, from:nil, for:nil)
+        UIApplication.shared.sendAction("resignFirstResponder", to: nil, from: nil, for: nil)
 
         self.delegate?.textSelected(selectedText)
     }
@@ -257,7 +257,7 @@ class TableSearchController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if (editingStyle == .delete) {
+        if editingStyle == .delete {
             tableContent.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
 
