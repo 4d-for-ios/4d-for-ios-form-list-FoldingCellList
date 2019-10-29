@@ -70,7 +70,6 @@ class ___TABLE___ListForm: ListFormTable {
             case 1136:
                 print("iPhone 5 or 5S or 5C")
                 searchBar.placeholder = "Version, Summary or Bug number"
-
             default:
                 print("other")
                 searchBar.placeholder = "Search by task name"
