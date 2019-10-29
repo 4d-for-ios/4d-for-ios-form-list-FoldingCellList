@@ -4,8 +4,8 @@
 
 ## Folding Cell List
 
-[![Language](http://img.shields.io/badge/language-swift-orange.svg?style=flat)](https://developer.apple.com/swift)
-![Lint](https://github.com/quatreios/4d-for-ios-form-list-FoldingCellList/workflows/Lint/badge.svg)
+[![Language][swift-shield]][swift-url]
+[![Lint][lint-shield]][lint-url]
 
 * **Type:** Table
 * **Section:** not available
@@ -20,3 +20,10 @@
 ## Acknowledgment
 
 * [Folding cell](https://github.com/Ramotion/folding-cell) is released under the MIT license.
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[swift-shield]: http://img.shields.io/badge/language-swift-orange.svg?style=flat
+[swift-url]: https://developer.apple.com/swift/
+[lint-shield]: https://github.com/quatreios/4d-for-ios-form-list-FoldingCellList/workflows/Lint/badge.svg
+[lint-url]: https://github.com/quatreios/4d-for-ios-form-list-FoldingCellList/actions?workflow=Lint
