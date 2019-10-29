@@ -18,6 +18,6 @@ jobs:
           swiftlint --strict
       - name: Install iblinter
         run: brew install IBDecodable/homebrew-tap/iblinter
-      - name: Code Lint
+      - name: Storyboard Lint
         run: |
           iblinter linter
