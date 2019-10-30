@@ -24,6 +24,7 @@ class ___TABLE___ListForm: ListFormTable {
         static var rowsCount = 6
     }
 
+    let blueColor = UIColor(red: 91/255, green: 180/255, blue: 175/255, alpha: 1.0)
     var cellHeights: [CGFloat] = []
     var unfolded: [IndexPath] = []
 
@@ -35,11 +36,9 @@ class ___TABLE___ListForm: ListFormTable {
 
     // MARK: Events
     override func onLoad() {
-
         setup()
 
         // SearchBar text style
-        let blueColor = UIColor(red: 91/255, green: 180/255, blue: 175/255, alpha: 1.0)
         if let textFieldInsideUISearchBar = searchBar.value(forKey: "searchField") as? UITextField {
             textFieldInsideUISearchBar.textColor = blueColor
             textFieldInsideUISearchBar.font = UIFont(name: "HelveticaNeue-Thin", size: 15)
@@ -52,13 +51,13 @@ class ___TABLE___ListForm: ListFormTable {
         self.refreshControl?.tintColor = .white
 
         switch UIScreen.main.nativeBounds.height {
-            case 1136:
-                print("iPhone 5 or 5S or 5C")
-                searchBar.placeholder = "Version, Summary or Bug number"
-            default:
-                print("other")
-                searchBar.placeholder = "Search by task name"
-            }
+        case 1136:
+            logger.verbose("placeholder: iPhone 5 or 5S or 5C")
+            searchBar.placeholder = "Version, Summary or Bug number"
+        default:
+            logger.verbose("placeholder: other sizes")
+            searchBar.placeholder = "Search by task name"
+        }
     }
 
     lazy var tableSearchController: TableSearchController = {
@@ -176,7 +175,8 @@ extension ___TABLE___ListForm {
 
     override func tableView(_: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
       //  super.tableView(tableView, willDisplay: cell, forRowAt: indexPath)
-        guard case let cell as CustomCell = cell else {
+        guard case let cell as ___TABLE___CustomCell = cell else {
+            logger.warning("Cell no more a ___TABLE___CustomCell. Could not configure it")
             return
         }
         cell.backgroundColor = .clear
@@ -188,7 +188,6 @@ extension ___TABLE___ListForm {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
         guard let cell = tableView.cellForRow(at: indexPath) as? FoldingCell, cell.isAnimating() else {
             return
         }
@@ -325,7 +324,7 @@ extension UserDefaults: SearchArray {
 
 // MARK: cell
 
-class CustomCell: FoldingCell {
+class ___TABLE___CustomCell: FoldingCell {
 
     let durations = [0.26, 0.2, 0.2]
 
